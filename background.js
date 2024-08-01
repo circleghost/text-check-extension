@@ -37,6 +37,17 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 async function callOpenAiApi(text, apiKey, tabId) {
+  const prompt = `你是一名專業的臺灣繁體中文雜誌編輯，幫我檢查給定內容的錯字及語句文法。請特別注意以下規則：
+1. 中文與英文之間，中文與數字之間應有空格，例如 FLAC，JPEG，Google Search Console 等。
+2. 以下情況不需調整：
+   - 括弧內的說明，例如（圖一）、（加入產品圖示）。
+   - 阿拉伯數字不用調整成中文。
+   - 英文不一定要翻譯成中文。
+   - emoji 或特殊符號是為了增加閱讀體驗，也不必調整。
+3. 請保留原文的段落和換行格式。
+4. 請不要使用額外的 Markdown 語法。
+5. 請仔細審視給定的文字，將冗詞、語法錯誤進行修改。`;
+
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -47,7 +58,7 @@ async function callOpenAiApi(text, apiKey, tabId) {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-          {role: "system", content: "你是一名專業的臺灣繁體中文雜誌編輯，幫我檢查給定內容的錯字及語句文法。"},
+          {role: "system", content: prompt},
           {role: "user", content: `請將以下文字複寫，中文語法正確並改掉錯字。\n\n<text>\n${text}\n</text>`}
         ],
         temperature: 0.7,
@@ -55,6 +66,12 @@ async function callOpenAiApi(text, apiKey, tabId) {
         stream: true
       })
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // ... 其餘代碼保持不變
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

@@ -14,12 +14,11 @@ function createFloatingButton() {
 function showFloatingButton(event) {
   if (!floatingButton) createFloatingButton();
 
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const rect = range.getBoundingClientRect();
+  const x = event.clientX + window.scrollX;
+  const y = event.clientY + window.scrollY;
 
-  floatingButton.style.top = `${window.scrollY + rect.bottom + 5}px`;
-  floatingButton.style.left = `${window.scrollX + rect.left}px`;
+  floatingButton.style.left = `${x}px`;
+  floatingButton.style.top = `${y}px`;
   floatingButton.style.display = 'block';
 }
 
@@ -28,11 +27,14 @@ function hideFloatingButton() {
 }
 
 function handleTextSelection(event) {
-  const selectedText = window.getSelection().toString().trim();
-  if (selectedText.length > 0) {
-    showFloatingButton(event);
-  } else {
-    hideFloatingButton();
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    if (!range.collapsed) {
+      showFloatingButton(event);
+    } else {
+      hideFloatingButton();
+    }
   }
 }
 
@@ -81,12 +83,12 @@ function correctText(text) {
         showError(msg.error);
       } else if (msg.done) {
         const finalComparison = compareTextHtml(text, correctedText);
-        updateCorrectionWindow(finalComparison, true);
+        updateCorrectionWindow(finalComparison, correctedText, true);
         chrome.runtime.onMessage.removeListener(messageListener);
       } else if (msg.content) {
         correctedText += msg.content;
         const comparison = compareTextHtml(text, correctedText);
-        updateCorrectionWindow(comparison, false);
+        updateCorrectionWindow(comparison, correctedText, false);
       }
     };
     chrome.runtime.onMessage.addListener(messageListener);
@@ -102,20 +104,19 @@ function showError(errorMessage) {
   }
 }
 
-function updateCorrectionWindow(comparison, isDone) {
+function updateCorrectionWindow(comparison, correctedText, isDone) {
   if (correctionWindow && !correctionWindow.closed) {
     const resultElement = correctionWindow.document.getElementById('result');
     if (resultElement) {
       resultElement.innerHTML = `
         <h3>校正結果：</h3>
-        <div id="corrected-text">${comparison}</div>
+        <div id="corrected-text">${comparison.replace(/\n/g, '<br>')}</div>
         ${isDone ? '<button id="copy-button">複製校正後的文字</button>' : ''}
       `;
       
       if (isDone) {
         const copyButton = correctionWindow.document.getElementById('copy-button');
         copyButton.addEventListener('click', function() {
-          const correctedText = correctionWindow.document.querySelector('#corrected-text').innerText;
           correctionWindow.navigator.clipboard.writeText(correctedText).then(() => {
             correctionWindow.alert('文字已複製到剪貼簿！');
           }).catch(err => {

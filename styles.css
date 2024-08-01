@@ -26,10 +26,13 @@
 }
 
 .text-correction-extension .del {
-  color: red;
+  color: #e74c3c;
   text-decoration: line-through;
+  text-decoration-color: #e74c3c;
+  text-decoration-thickness: 2px;
 }
 
 .text-correction-extension .ins {
-  color: green;
+  color: #27ae60;
+  border-bottom: 2px solid #27ae60;
 }
