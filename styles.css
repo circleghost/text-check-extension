@@ -1,0 +1,35 @@
+.text-correction-extension {
+  width: 400px;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.text-correction-extension h1 {
+  font-size: 18px;
+}
+
+.text-correction-extension #comparison-result {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.text-correction-extension #corrected-text {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.text-correction-extension .del {
+  color: red;
+  text-decoration: line-through;
+}
+
+.text-correction-extension .ins {
+  color: green;
+}
