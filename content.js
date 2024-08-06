@@ -1,6 +1,21 @@
 let floatingButton = null;
 let correctionWindow = null;
 
+if (window.location.hostname === 'docs.google.com' || window.location.hostname === 'slides.google.com') {
+  const script = document.createElement('script');
+  script.src = chrome.runtime.getURL('google-docs-inject.js');
+  document.head.appendChild(script);
+
+  window.addEventListener("message", function(event) {
+    if (event.source != window) return;
+    if (event.data.type && (event.data.type == "FROM_PAGE")) {
+      handleCorrection(event.data.text);
+    }
+  }, false);
+} else {
+  document.addEventListener('mouseup', handleTextSelection);
+}
+
 function createFloatingButton() {
   if (floatingButton) return;
 
@@ -14,12 +29,14 @@ function createFloatingButton() {
 function showFloatingButton(event) {
   if (!floatingButton) createFloatingButton();
 
-  const x = event.clientX + window.scrollX;
-  const y = event.clientY + window.scrollY;
+  const x = event.clientX || window.innerWidth / 2;
+  const y = event.clientY || window.innerHeight / 2;
 
+  console.log(`按鈕位置：x=${x}, y=${y}`);
   floatingButton.style.left = `${x}px`;
   floatingButton.style.top = `${y}px`;
   floatingButton.style.display = 'block';
+  console.log('按鈕應該已顯示');
 }
 
 function hideFloatingButton() {
@@ -145,8 +162,6 @@ function compareTextHtml(text1, text2) {
   
   return result;
 }
-
-document.addEventListener('mouseup', handleTextSelection);
 
 // 載入 diff 庫
 const script = document.createElement('script');

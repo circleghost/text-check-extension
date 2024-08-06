@@ -3,9 +3,10 @@
   "name": "文字校正與比較工具",
   "version": "1.0",
   "description": "校正選中的文字並顯示比較結果",
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": [
-    "https://api.openai.com/*"
+    "https://api.openai.com/*",
+    "https://docs.google.com/*"
   ],
   "content_scripts": [
     {
@@ -15,7 +16,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["content-styles.css", "fonts/*"],
+    "resources": ["content-styles.css", "fonts/*", "google-slides-inject.js", "google-docs-inject.js"],
     "matches": ["<all_urls>"]
   }],
   "background": {
