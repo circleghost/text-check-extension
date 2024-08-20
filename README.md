@@ -1,6 +1,6 @@
 # 文字校正與比較工具
 
-這是一個 Chrome 擴展程式,用於校正選中的文字並顯示比較結果。它特別適用於中文文本的校正,並支持 Google Docs 和 Google Slides。
+這是 Chrome 擴展程式,用於校正選中的文字並顯示比較結果。它特別適用於中文文本的校正,並支持 Google Docs 和 Google Slides。
 
 ## 功能
 
